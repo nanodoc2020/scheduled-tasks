@@ -13,8 +13,8 @@ import os
 
 
 # import os and use it to get the Github repository secrets
-MY_EMAIL = os.environ.get("MY_EMAIL")
-MY_PASSWORD = os.environ.get("MY_PASSWORD")
+sender = os.environ.get("MY_EMAIL")
+app_password = os.environ.get("MY_PASSWORD")
 
 bday_letters = ['letter_1.txt', 'letter_2.txt', 'letter_3.txt']
 sender = 'larsene300@gmail.com'
