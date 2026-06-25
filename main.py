@@ -17,8 +17,6 @@ sender = os.environ.get("MY_EMAIL")
 app_password = os.environ.get("MY_PASSWORD")
 
 bday_letters = ['letter_1.txt', 'letter_2.txt', 'letter_3.txt']
-sender = 'larsene300@gmail.com'
-app_password = "jtxh pmhp vhet ding"
 
 now = dt.datetime.now()
 month = now.month
