@@ -5,34 +5,48 @@
 # 4. Update birthdays.csv to contain today's month and day.
 # See the solution video in the 100 Days of Python Course for explainations.
 
-
-from datetime import datetime
-import pandas
-import random
-import smtplib
+import datetime as dt
+import pandas as pd
+import random as rnd
+import smtplib as smtp
 import os
+
 
 # import os and use it to get the Github repository secrets
 MY_EMAIL = os.environ.get("MY_EMAIL")
 MY_PASSWORD = os.environ.get("MY_PASSWORD")
 
-today = datetime.now()
-today_tuple = (today.month, today.day)
+bday_letters = ['letter_1.txt', 'letter_2.txt', 'letter_3.txt']
+sender = 'larsene300@gmail.com'
+app_password = "jtxh pmhp vhet ding"
 
-data = pandas.read_csv("birthdays.csv")
-birthdays_dict = {(data_row["month"], data_row["day"])                  : data_row for (index, data_row) in data.iterrows()}
-if today_tuple in birthdays_dict:
-    birthday_person = birthdays_dict[today_tuple]
-    file_path = f"letter_templates/letter_{random.randint(1, 3)}.txt"
-    with open(file_path) as letter_file:
-        contents = letter_file.read()
-        contents = contents.replace("[NAME]", birthday_person["name"])
+now = dt.datetime.now()
+month = now.month
+day = now.day
+year = now.year
 
-    with smtplib.SMTP("YOUR EMAIL PROVIDER SMTP SERVER ADDRESS") as connection:
-        connection.starttls()
-        connection.login(MY_EMAIL, MY_PASSWORD)
-        connection.sendmail(
-            from_addr=MY_EMAIL,
-            to_addrs=birthday_person["email"],
-            msg=f"Subject:Happy Birthday!\n\n{contents}"
-        )
+birthdays_df = pd.read_csv('birthdays.csv')
+
+for row in birthdays_df.iterrows():
+    bd_month = row[1]["month"]
+    bday = row[1]["day"]
+    if month == bd_month and day == bday:
+        name = row[1]["name"]
+        email = row[1]["email"]
+        letter_choice = rnd.choice(bday_letters)
+        letter_path = "letter_templates/" + letter_choice
+        with open(letter_path, 'r' ) as f:
+            data = f.read()
+            data = data.replace('[NAME]', name)
+            print(data)
+        try:
+            with smtp.SMTP('smtp.gmail.com', 587) as connection:
+                connection.starttls()
+                connection.login(sender, app_password)
+                connection.sendmail(sender, email, msg="Subject:Happy Birthday!\n\n" + data)
+        except smtp.SMTPException as error:
+            print(f'Something went wrong: {error}')
+        else:
+            print("Birthday emails sent!")
+        finally:
+            connection.close()
